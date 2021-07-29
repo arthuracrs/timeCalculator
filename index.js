@@ -57,7 +57,6 @@ const resul1tButton = $('#result1Button')
 const resul2tButton = $('#result2Button')
 
 result1Button.addEventListener('click', function () {
-
     const parentNode = this.parentNode
 
     const input1 = parentNode.querySelector('#timeInput1')
