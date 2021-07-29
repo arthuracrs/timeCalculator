@@ -1,13 +1,5 @@
 const $ = document.querySelector.bind(document)
 
-let total = '00:00'
-
-const resultButton = $('#resultButton')
-const score = $('.total')
-
-const timeInput1 = $('#timeInput1')
-const timeInput2 = $('#timeInput2')
-
 function genDate(text) {
     const tempText = text.split(':')
 
@@ -19,9 +11,7 @@ function genText(date) {
 }
 
 function sumTime(start, end) {
-    console.log(start)
-    console.log(end)
-    
+
     let tempHours = start.getHours() + end.getHours()
     let tempMinutes = start.getMinutes() + end.getMinutes()
 
@@ -29,7 +19,6 @@ function sumTime(start, end) {
     let minutes = tempMinutes
 
     if (minutes > 59) {
-
         hours = tempHours + (tempMinutes / 60)
         minutes = tempMinutes % 60
     }
@@ -38,36 +27,57 @@ function sumTime(start, end) {
 }
 
 function diff(start, end) {
-    console.log(start)
-    console.log(end)
-    
-    let tempHours = 0
 
-    if(start.getHours() <= end.getHours()){
-        tempHours = end.getHours() - start.getHours()
-    }else{
-        tempHours = 24 - (start.getHours() - end.getHours())
-    }
-    console.log(tempHours)
-    let tempMinutes = start.getMinutes() + end.getMinutes()
-    
-    if(start.getMinutes() <= end.getMinutes()){
-        tempMinutes = end.getMinutes() - start.getMinutes()
-    }else{
-        tempMinutes = 60 - (start.getMinutes() - end.getMinutes())
-    }
-    console.log(tempMinutes)
-    let hours = tempHours
-    let minutes = tempMinutes
+    let tempMinutes = 0
+    let startMinutes = (start.getHours() * 60) + start.getMinutes()
+    let endMinutes = (end.getHours() * 60) + end.getMinutes()
 
-    return hours.toFixed(0) + ":" + ('0' + minutes).slice(-2)
+    if (startMinutes <= endMinutes) {
+        tempMinutes = endMinutes - startMinutes
+    } else {
+        tempMinutes = 1440 - (startMinutes - endMinutes)
+    }
+
+    let hours = Math.floor(tempMinutes / 60)
+    let minutes = tempMinutes % 60
+
+    return ('0' + hours).slice(-2) + ":" + ('0' + minutes).slice(-2)
 }
 
-resultButton.addEventListener('click', () => {
-    const a = genDate(timeInput1.value)
-    const b = genDate(timeInput2.value)
-
-    console.log(diff(a,b))
-    total = sumTime(genDate(total), genDate(diff(a, b)))
+function updateScore() {
+    const score = $('.total')
+    total = sumTime(genDate(turns[0]), genDate(turns[1]))
     score.innerHTML = 'TOTAL DO DIA: ' + total
+}
+
+let turns = ['00:00', '00:00']
+let total = sumTime(genDate(turns[0]), genDate(turns[1]))
+
+const resul1tButton = $('#result1Button')
+const resul2tButton = $('#result2Button')
+
+result1Button.addEventListener('click', function () {
+
+    const parentNode = this.parentNode
+
+    const input1 = parentNode.querySelector('#timeInput1')
+    const input2 = parentNode.querySelector('#timeInput2')
+
+    let temp = diff(genDate(input1.value), genDate(input2.value))
+    turns[0] = temp
+    
+    updateScore()
+})
+
+result2Button.addEventListener('click', function () {
+    const parentNode = this.parentNode
+
+    const input1 = parentNode.querySelector('#timeInput1')
+    const input2 = parentNode.querySelector('#timeInput2')
+
+    let temp = diff(genDate(input1.value), genDate(input2.value))
+    turns[1] = temp
+
+    const score = $('.total')
+    updateScore()
 })
